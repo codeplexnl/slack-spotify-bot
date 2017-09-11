@@ -40,12 +40,14 @@ class Spotify:
             
             if command in COMMAND_PLAY:
                 Spotify.execute_command(COMMAND_PLAY[0])
+                return "Starting playback."
                 
             if command in COMMAND_PAUSE:
                 Spotify.execute_command(COMMAND_PAUSE[0])
-                
+                return "Stopping playback."
+                                
             if command in COMMAND_NEXT:
-                if Spotify.check_user(user):
+                if Spotify.check_user(user): 
                     Spotify.execute_command(COMMAND_NEXT[0])
                     USERS[user] = datetime.datetime.now() + datetime.timedelta(minutes=config.WAIT_TIME)
                 else:
@@ -66,8 +68,6 @@ class Spotify:
                           "!info Shows the current playing song\n" + \
                           "!playlist Gives the link to the spotify playlist\n" + \
                           "==========================================================\n"
-                          
-            # return "Command not found"
         return None
         
     @staticmethod
