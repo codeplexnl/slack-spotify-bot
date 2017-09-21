@@ -89,6 +89,7 @@ class Spotify:
                     VOLUME[user] = datetime.datetime.now() + datetime.timedelta(minutes=config.VOLUME_TIME)
                     config.PLAYING_MAX = True
                     Spotify.execute_command("vol 100")
+                    return "Volume maxed"
                 else:
                     return "Already used volume up in the last {} minutes. Try again later".format(config.VOLUME_TIME)
                 
