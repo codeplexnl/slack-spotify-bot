@@ -9,6 +9,7 @@ if __name__ == "__main__":
     READ_WEBSOCKET_DELAY = 1
     song = None
     Spotify.set_volume(80)
+    config.PLAYING_MAX = False
     if slack.connect():
         while True:
             channel, user, message = slack.read_message()
@@ -21,7 +22,7 @@ if __name__ == "__main__":
                 slack.send_message(current_song, config.SLACK_CHANNEL)
                 song = current_song
                 Spotify.set_volume(80)
-                
+                config.PLAYING_MAX = False
             time.sleep(READ_WEBSOCKET_DELAY)
     else:
         print("error connecting")    
