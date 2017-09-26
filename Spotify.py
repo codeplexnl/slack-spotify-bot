@@ -1,5 +1,4 @@
-import sys, getopt, dbus
-from subprocess import Popen, PIPE
+import subprocess
 import datetime
 
 import config
@@ -20,7 +19,7 @@ class Spotify:
     
     @staticmethod
     def set_volume(volumePercent):
-        Popen('pactl set-sink-volume 0 "%s"' % volumePercent, shell=True, stdout=PIPE)
+        Spotify.execute_command("volume %s" % volumePercent)
     
     @staticmethod
     def check_user(user):
@@ -36,8 +35,7 @@ class Spotify:
         
     @staticmethod
     def execute_command(spotifyCommand):
-        Popen('dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify ' \
-        '/org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player."%s"' % spotifyCommand, shell=True, stdout=PIPE)
+        return subprocess.check_output(["mpc", spotifyCommand])
         
     @staticmethod
     def handle_message(channel, user, message):
@@ -48,16 +46,16 @@ class Spotify:
             command = message[len(COMMAND_PREFIX):]
             
             if command in COMMAND_PLAY:
-                Spotify.execute_command("--play")
+                Spotify.execute_command("play")
                 return "Starting playback."
                 
             if command in COMMAND_PAUSE:
-                Spotify.execute_command("--pause")
+                Spotify.execute_command("pause")
                 return "Stopping playback."
                                 
             if command in COMMAND_NEXT:
                 if Spotify.check_user(user): 
-                    Spotify.execute_command("--next")
+                    Spotify.execute_command("next")
                     USERS[user] = datetime.datetime.now() + datetime.timedelta(minutes=config.WAIT_TIME)
                 else:
                     return "Already skipped in the last {} minutes. Try again later".format(config.WAIT_TIME)
@@ -92,15 +90,6 @@ class Spotify:
         
     @staticmethod
     def get_current_song():
-        try:
-            session_bus = dbus.SessionBus()
-            spotify_bus = session_bus.get_object("org.mpris.MediaPlayer2.spotify", "/org/mpris/MediaPlayer2")
-            spotify_properties = dbus.Interface(spotify_bus, "org.freedesktop.DBus.Properties")
-            metadata = spotify_properties.Get("org.mpris.MediaPlayer2.Player", "Metadata")
-
-            title = metadata['xesam:title'][:10] + (metadata['xesam:title'][10:] and '...')
-            artist = metadata['xesam:artist'][0][:15] + (metadata['xesam:artist'][0][15:] and '...')
-            return "%s - %s" % (artist, title)
-        except:
-            # we go here when spotify is turned off, not installed or we cannot access dbus
-            return "spotify is off"
+        output = Spotify.execute_command("status")
+        output = output.split("\n")
+        return output[0]
