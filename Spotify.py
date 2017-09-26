@@ -47,7 +47,7 @@ class Spotify:
             command = message[len(COMMAND_PREFIX):]
             
             if command in COMMAND_QUEUE:
-                queue = Spotify.get_queue(5):
+                queue = Spotify.get_queue(5)
                 numbers = "First {} numbers in the queue".format(len(queue))
                 for number in queue:
                     numbers+= "\n{}".format(number)
