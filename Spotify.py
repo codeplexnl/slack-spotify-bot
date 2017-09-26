@@ -10,6 +10,7 @@ COMMAND_NEXT = ['next', 'skip']
 COMMAND_INFO = ['info', 'current', 'song']
 COMMAND_HELP = ['help']
 COMMAND_PLAYLIST = ['playlist', 'pl']
+COMMAND_QUEUE = ['queue', 'q']
 COMMAND_VOLUME_UP = ['volumeup', 'volup', 'vu']
 
 USERS = {}
@@ -45,6 +46,12 @@ class Spotify:
             
             command = message[len(COMMAND_PREFIX):]
             
+            if command in COMMAND_QUEUE:
+                queue = Spotify.get_queue(5):
+                numbers = "First {} numbers in the queue".format(len(queue))
+                for number in queue:
+                    numbers+= "\n{}".format(number)
+            
             if command in COMMAND_PLAY:
                 Spotify.execute_command("play")
                 return "Starting playback."
@@ -75,6 +82,7 @@ class Spotify:
                           "!info Shows the current playing song\n" + \
                           "!playlist Gives the link to the spotify playlist\n" + \
                           "!volumeup Plays the current song at max volume\n" + \
+                          "!queue gets the next songs in the queue\n" + \
                           "==========================================================\n"
                           
             if command in COMMAND_VOLUME_UP and not config.PLAYING_MAX:
@@ -93,3 +101,9 @@ class Spotify:
         output = Spotify.execute_command("status")
         output = output.split("\n")
         return output[0]
+    
+    @staticmethod
+    def get_queue(num):
+        output = Spotify.execute_command("playlist")
+        output = output.split("\n")
+        return output[:num]
