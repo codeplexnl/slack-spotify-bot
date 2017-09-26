@@ -19,7 +19,7 @@ class Spotify:
     
     @staticmethod
     def set_volume(volumePercent):
-        Spotify.execute_command("volume %s" % volumePercent)
+        Spotify.execute_command("volume {}".format(volumePercent))
     
     @staticmethod
     def check_user(user):
@@ -35,7 +35,7 @@ class Spotify:
         
     @staticmethod
     def execute_command(spotifyCommand):
-        return subprocess.check_output(["mpc", spotifyCommand])
+        return subprocess.check_output("mpc {}".format(spotifyCommand))
         
     @staticmethod
     def handle_message(channel, user, message):
