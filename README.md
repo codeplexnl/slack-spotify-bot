@@ -1,17 +1,9 @@
 # Spot-Bot
-This is a simple slack bot to control spotify running on my mac.
+This is a simple slack bot to control spotify running on a raspberrypi.
 
 ## Requirements
-### spotify
-The script requires [Spotify](https://spotify.com) to be installed on your system
-
-### shpotify
-The script commands are based on [shpotify](https://github.com/hnarayanan/shpotify) and oly tested on OSX.
-
-```
-brew install shpotify
-```
-
+### Spotify
+This script uses pi musicbox image to be setup with spotify.
 
 ### slackclient
 This bot uses slackclient to connect to the RTM slack api. 

@@ -8,7 +8,7 @@ if __name__ == "__main__":
     slack = Slack(config.SLACK_TOKEN)
     READ_WEBSOCKET_DELAY = 1
     song = None
-    Spotify.volume_down()
+    Spotify.set_volume(80)
     if slack.connect():
         while True:
             channel, user, message = slack.read_message()
@@ -20,7 +20,7 @@ if __name__ == "__main__":
             if song != current_song:
                 slack.send_message(current_song, config.SLACK_CHANNEL)
                 song = current_song
-                Spotify.volume_down()
+                Spotify.set_volume(80)
                 
             time.sleep(READ_WEBSOCKET_DELAY)
     else:
