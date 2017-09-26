@@ -51,6 +51,7 @@ class Spotify:
                 numbers = "First {} numbers in the queue".format(len(queue))
                 for number in queue:
                     numbers+= "\n{}".format(number)
+                return numbers
             
             if command in COMMAND_PLAY:
                 Spotify.execute_command("play")
