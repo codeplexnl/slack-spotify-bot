@@ -35,7 +35,7 @@ class Spotify:
         
     @staticmethod
     def execute_command(spotifyCommand):
-        return subprocess.check_output("mpc {}".format(spotifyCommand))
+        return subprocess.check_output("mpc {}".format(spotifyCommand), shell=True)
         
     @staticmethod
     def handle_message(channel, user, message):
