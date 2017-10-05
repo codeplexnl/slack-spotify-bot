@@ -107,4 +107,4 @@ class Spotify:
     def get_queue(num):
         output = Spotify.execute_command("playlist")
         output = output.split("\n")
-        return output[:num]
+        return output[1:num+1]
