@@ -103,7 +103,7 @@ class Spotify:
                     return "Already used volume up in the last {} minutes. Try again later".format(config.VOLUME_TIME)
 
             if command in COMMAND_DELETE:
-                if int(numParam.split(" ", 1)[1]) > config.QUEUE_LENGTH or int(numParam.split(" ", 1)[1]) < 1:
+                if numParam > config.QUEUE_LENGTH or numParam < 1:
                     return "Please choose a number between 1-" + str(config.QUEUE_LENGTH)
                 elif Spotify.check_user(user):
                     Spotify.execute_command("del")
