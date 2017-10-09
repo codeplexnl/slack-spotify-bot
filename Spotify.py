@@ -17,7 +17,7 @@ COMMAND_DELETE = ['delete', 'del', 'd']
 USERS = {}
 VOLUME = {}
 
-queueLength = 5
+
 
 
 class Spotify:
@@ -51,7 +51,7 @@ class Spotify:
             numParam = int(filter(str.isdigit, message))
 
             if command in COMMAND_QUEUE:
-                queue = Spotify.get_queue(queueLength)
+                queue = Spotify.get_queue(config.QUEUE_LENGTH)
                 numbers = "First {} numbers in the queue".format(len(queue))
                 index = 1
                 for number in queue:
@@ -103,8 +103,8 @@ class Spotify:
                     return "Already used volume up in the last {} minutes. Try again later".format(config.VOLUME_TIME)
 
             if command in COMMAND_DELETE:
-                if int(numParam.split(" ", 1)[1]) > queueLength or int(numParam.split(" ", 1)[1]) < 1:
-                    return "Please choose a number between 1-" + str(queueLength)
+                if int(numParam.split(" ", 1)[1]) > config.QUEUE_LENGTH or int(numParam.split(" ", 1)[1]) < 1:
+                    return "Please choose a number between 1-" + str(config.QUEUE_LENGTH)
                 elif Spotify.check_user(user):
                     Spotify.execute_command("del")
                     USERS[user] = datetime.datetime.now() + datetime.timedelta(minutes=config.WAIT_TIME)
