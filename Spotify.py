@@ -18,8 +18,6 @@ USERS = {}
 VOLUME = {}
 
 
-
-
 class Spotify:
     @staticmethod
     def set_volume(volumePercent):
@@ -47,16 +45,16 @@ class Spotify:
             if not message.startswith(COMMAND_PREFIX):
                 return None
 
-            command = message[len(COMMAND_PREFIX):]
-            numParam = int(filter(str.isdigit, message))
+            command = message[len(COMMAND_PREFIX):].partition(' ')[0]
+            param = message.partition(' ')[2]
 
             if command in COMMAND_QUEUE:
                 queue = Spotify.get_queue(config.QUEUE_LENGTH)
                 numbers = "First {} numbers in the queue".format(len(queue))
-                index = 1
-                for number in queue:
-                    numbers += "\n{}".format(str(index) + ". " + number)
-                    index += 1
+
+                for idx, number in enumerate(queue):
+                    numbers += "\n{}. {}".format(str(idx+1), number)
+
                 return numbers
 
             if command in COMMAND_PLAY:
@@ -103,14 +101,16 @@ class Spotify:
                     return "Already used volume up in the last {} minutes. Try again later".format(config.VOLUME_TIME)
 
             if command in COMMAND_DELETE:
-                if numParam > config.QUEUE_LENGTH or numParam < 1:
-                    return "Please choose a number between 1-" + str(config.QUEUE_LENGTH)
-                elif Spotify.check_user(user):
-                    Spotify.execute_command("del")
-                    USERS[user] = datetime.datetime.now() + datetime.timedelta(minutes=config.WAIT_TIME)
-                else:
-                    return "Already skipped or deleted a song from the queue in the last {} minutes. Try again later".format(
-                        config.WAIT_TIME)
+                try:
+                    param = int(param)
+                    if 5 > param > 1 and Spotify.check_user(user):
+                        Spotify.execute_command("del {}").format(param)
+                        USERS[user] = datetime.datetime.now() + datetime.timedelta(minutes=config.WAIT_TIME)
+                    else:
+                        return "Already skipped or deleted a song from the queue in the last {} minutes. " \
+                               "Try again later".format(config.WAIT_TIME)
+                except ValueError:
+                    return "Please choose a number between 1 - {}".format(str(config.QUEUE_LENGTH))
 
         return None
 
