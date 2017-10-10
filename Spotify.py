@@ -106,7 +106,7 @@ class Spotify:
                     try:
                         params = int(params)
                         if 5 > params > 1 and Spotify.check_user(user):
-                            Spotify.execute_command("del {}").format(params)
+                            Spotify.execute_command("del {}".format(params))
                             USERS[user] = datetime.datetime.now() + datetime.timedelta(minutes=config.WAIT_TIME)
                         else:
                             return "Already skipped or deleted a song from the queue in the last {} minutes. " \
