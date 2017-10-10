@@ -57,7 +57,7 @@ class Spotify:
                 numbers = "First {} numbers in the queue".format(len(queue))
 
                 for idx, number in enumerate(queue):
-                    numbers += "\n{}. {}".format(str(idx+1), number)
+                    numbers += "\n{}. {}".format(str(idx + 1), number)
                 return numbers
 
             if command in COMMAND_PLAY:
@@ -93,7 +93,7 @@ class Spotify:
                        "!queue gets the next songs in the queue\n" + \
                        "!delete <pos> Deletes a song from the queue (Only allowed once per 15 min, shared with next)\n" + \
                        "!random <a> <b> Return a random integer N such that a <= N <= b. )\n" + \
-                       "!lyrics Shows the lyrics of current song\n" + \
+                       "!lyrics (<artist>-<title>) Shows the lyrics of current song or given song\n" + \
                        "==========================================================\n"
 
             if command in COMMAND_VOLUME_UP and not config.PLAYING_MAX:
@@ -112,8 +112,8 @@ class Spotify:
                         params = int(params)
                         if 5 > params > 1 and Spotify.check_user(user):
                             queue = Spotify.get_queue(config.QUEUE_LENGTH)
-                            song_info = queue[params-1]
-                            Spotify.execute_command("del {}".format(params+1))
+                            song_info = queue[params - 1]
+                            Spotify.execute_command("del {}".format(params + 1))
                             USERS[user] = datetime.datetime.now() + datetime.timedelta(minutes=config.WAIT_TIME)
                             return "Removed {} from the queue".format(song_info)
                         else:
@@ -143,17 +143,22 @@ class Spotify:
                     return default
 
             if command in COMMAND_LYRICS:
-                return Spotify.get_lyrics()
+                if params is not None:
+                    artist, title = params.split('-', 1)
+                    return Spotify.get_lyrics(artist, title)
+                else:
+                    return Spotify.get_lyrics()
 
         return None
 
     @staticmethod
-    def get_lyrics():
+    def get_lyrics(artist=None, title=None):
+        if artist is None and title is None:
+            artist, title = Spotify.get_current_song().split(' - ', 1)
         url = 'https://makeitpersonal.co/lyrics'
-        artist, title = Spotify.get_current_song().split(' - ')
         data = {'artist': artist, 'title': title}
         r = requests.get(url, data)
-        return r.content
+        print r.content
 
     @staticmethod
     def get_current_song():
