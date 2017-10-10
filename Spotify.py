@@ -107,8 +107,11 @@ class Spotify:
                     try:
                         params = int(params)
                         if 5 > params > 1 and Spotify.check_user(user):
+                            queue = Spotify.get_queue(config.QUEUE_LENGTH)
+                            song_info = queue[params]
                             Spotify.execute_command("del {}".format(params))
                             USERS[user] = datetime.datetime.now() + datetime.timedelta(minutes=config.WAIT_TIME)
+                            return "Removed {} from the queue".format(song_info)
                         else:
                             return "Already skipped or deleted a song from the queue in the last {} minutes. " \
                                    "Try again later".format(config.WAIT_TIME)
@@ -118,6 +121,8 @@ class Spotify:
                     return error
 
             if command in COMMAND_RANDOM:
+                default = random.randint(1, 10)
+                if params is not None:
                     try:
                         param_first, param_second = params.split(None, 1)
                         param_first = int(param_first)
@@ -127,10 +132,11 @@ class Spotify:
                         elif param_second.isdigit():
                             return random.randint(param_first, int(param_second))
                         else:
-                            return random.randint(1, 10)
+                            return default
                     except ValueError:
-                        return random.randint(1, 10)
-
+                        return default
+                else:
+                    return default
         return None
 
     @staticmethod
