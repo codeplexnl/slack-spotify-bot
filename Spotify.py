@@ -47,7 +47,7 @@ class Spotify:
             if not message.startswith(COMMAND_PREFIX):
                 return None
 
-            command, params = message[len(COMMAND_PREFIX):].split(None, 1)
+            command, params = Spotify.get_command_and_params(message[len(COMMAND_PREFIX):])
 
             if command in COMMAND_QUEUE:
                 queue = Spotify.get_queue(config.QUEUE_LENGTH)
@@ -102,31 +102,33 @@ class Spotify:
                     return "Already used volume up in the last {} minutes. Try again later".format(config.VOLUME_TIME)
 
             if command in COMMAND_DELETE:
-                try:
-                    params = int(params)
-                    if 5 > params > 1 and Spotify.check_user(user):
-                        Spotify.execute_command("del {}").format(params)
-                        USERS[user] = datetime.datetime.now() + datetime.timedelta(minutes=config.WAIT_TIME)
-                    else:
-                        return "Already skipped or deleted a song from the queue in the last {} minutes. " \
-                               "Try again later".format(config.WAIT_TIME)
-                except ValueError:
-                    return "Please choose a number between 1 - {}".format(str(config.QUEUE_LENGTH))
+                if params is not None:
+                    try:
+                        params = int(params)
+                        if 5 > params > 1 and Spotify.check_user(user):
+                            Spotify.execute_command("del {}").format(params)
+                            USERS[user] = datetime.datetime.now() + datetime.timedelta(minutes=config.WAIT_TIME)
+                        else:
+                            return "Already skipped or deleted a song from the queue in the last {} minutes. " \
+                                   "Try again later".format(config.WAIT_TIME)
+                    except ValueError:
+                        return "Please choose a number between 1 - {}".format(str(config.QUEUE_LENGTH))
 
             if command in COMMAND_RANDOM:
-                param_first, param_second = params.split(None, 1)
-                try:
-                    param_first = int(param_first)
+                if params is not None:
+                    param_first, param_second = params.split(None, 1)
+                    try:
+                        param_first = int(param_first)
 
-                    if param_second.__eq__(''):
-                        return random.randint(1, int(param_first))
-                    elif param_second.isdigit():
-                        return random.randint(param_first, int(param_second))
-                    else:
+                        if param_second.__eq__(''):
+                            return random.randint(1, int(param_first))
+                        elif param_second.isdigit():
+                            return random.randint(param_first, int(param_second))
+                        else:
+                            return random.randint(1, 10)
+                    except ValueError:
                         return random.randint(1, 10)
-                except ValueError:
-                    return random.randint(1, 10)
-                
+
         return None
 
     @staticmethod
@@ -140,3 +142,11 @@ class Spotify:
         output = Spotify.execute_command("playlist")
         output = output.split("\n")
         return output[1:num + 1]
+
+    @staticmethod
+    def get_command_and_params(message):
+        if len(message.split()) > 1:
+            command, params = message.split(None, 1)
+            return command, params
+
+        return message, None
