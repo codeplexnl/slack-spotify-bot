@@ -102,6 +102,7 @@ class Spotify:
                     return "Already used volume up in the last {} minutes. Try again later".format(config.VOLUME_TIME)
 
             if command in COMMAND_DELETE:
+                error = "Please choose a number between 1 - {}".format(str(config.QUEUE_LENGTH))
                 if params is not None:
                     try:
                         params = int(params)
@@ -112,12 +113,13 @@ class Spotify:
                             return "Already skipped or deleted a song from the queue in the last {} minutes. " \
                                    "Try again later".format(config.WAIT_TIME)
                     except ValueError:
-                        return "Please choose a number between 1 - {}".format(str(config.QUEUE_LENGTH))
+                        return error
+                else:
+                    return error
 
             if command in COMMAND_RANDOM:
-                if params is not None:
-                    param_first, param_second = params.split(None, 1)
                     try:
+                        param_first, param_second = params.split(None, 1)
                         param_first = int(param_first)
 
                         if param_second.__eq__(''):
