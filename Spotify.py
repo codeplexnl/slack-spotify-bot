@@ -108,8 +108,8 @@ class Spotify:
                         params = int(params)
                         if 5 > params > 1 and Spotify.check_user(user):
                             queue = Spotify.get_queue(config.QUEUE_LENGTH)
-                            song_info = queue[params]
-                            Spotify.execute_command("del {}".format(params))
+                            song_info = queue[params-1]
+                            Spotify.execute_command("del {}".format(params+1))
                             USERS[user] = datetime.datetime.now() + datetime.timedelta(minutes=config.WAIT_TIME)
                             return "Removed {} from the queue".format(song_info)
                         else:
