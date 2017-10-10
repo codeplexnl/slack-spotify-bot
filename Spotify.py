@@ -93,7 +93,7 @@ class Spotify:
                        "!queue gets the next songs in the queue\n" + \
                        "!delete <pos> Deletes a song from the queue (Only allowed once per 15 min, shared with next)\n" + \
                        "!random <a> <b> Return a random integer N such that a <= N <= b. )\n" + \
-                       "!lyrics (<artist>-<title>) Shows the lyrics of current song or given song\n" + \
+                       "!lyrics (<artist> - <title>) Shows the lyrics of current song or given song\n" + \
                        "==========================================================\n"
 
             if command in COMMAND_VOLUME_UP and not config.PLAYING_MAX:
@@ -144,21 +144,24 @@ class Spotify:
 
             if command in COMMAND_LYRICS:
                 if params is not None:
-                    artist, title = params.split('-', 1)
-                    return Spotify.get_lyrics(artist, title)
+                    try:
+                        artist, title = params.split('-', 1)
+                        print Spotify.get_lyrics(artist, title)
+                    except ValueError:
+                        print 'Format your song as <artist> - <title>'
                 else:
-                    return Spotify.get_lyrics()
+                    print Spotify.get_lyrics()
 
         return None
 
     @staticmethod
     def get_lyrics(artist=None, title=None):
         if artist is None and title is None:
-            artist, title = Spotify.get_current_song().split(' - ', 1)
+            artist, title = Spotify.get_current_song().split('-', 1)
         url = 'https://makeitpersonal.co/lyrics'
         data = {'artist': artist, 'title': title}
         r = requests.get(url, data)
-        print r.content
+        return r.content
 
     @staticmethod
     def get_current_song():
