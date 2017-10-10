@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 import subprocess
 import datetime
 import random
+import requests, json
 
 import config
 
@@ -15,6 +17,7 @@ COMMAND_QUEUE = ['queue', 'q']
 COMMAND_VOLUME_UP = ['volumeup', 'volup', 'vu']
 COMMAND_DELETE = ['delete', 'del', 'd']
 COMMAND_RANDOM = ['random', 'rand', 'roll']
+COMMAND_LYRICS = ['lyrics', 'lyr']
 
 USERS = {}
 VOLUME = {}
@@ -90,6 +93,7 @@ class Spotify:
                        "!queue gets the next songs in the queue\n" + \
                        "!delete <pos> Deletes a song from the queue (Only allowed once per 15 min, shared with next)\n" + \
                        "!random <a> <b> Return a random integer N such that a <= N <= b. )\n" + \
+                       "!lyrics Shows the lyrics of current song\n" + \
                        "==========================================================\n"
 
             if command in COMMAND_VOLUME_UP and not config.PLAYING_MAX:
@@ -137,7 +141,19 @@ class Spotify:
                         return default
                 else:
                     return default
+
+            if command in COMMAND_LYRICS:
+                return Spotify.get_lyrics()
+
         return None
+
+    @staticmethod
+    def get_lyrics():
+        url = 'https://makeitpersonal.co/lyrics'
+        artist, title = Spotify.get_current_song().split(' - ')
+        data = {'artist': artist, 'title': title}
+        r = requests.get(url, data)
+        return r.content
 
     @staticmethod
     def get_current_song():
