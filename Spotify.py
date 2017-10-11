@@ -146,11 +146,11 @@ class Spotify:
                 if params is not None:
                     try:
                         artist, title = params.split('-', 1)
-                        print Spotify.get_lyrics(artist, title)
+                        return Spotify.get_lyrics(artist, title)
                     except ValueError:
-                        print 'Format your song as <artist> - <title>'
+                        return 'Format your song as <artist> - <title>'
                 else:
-                    print Spotify.get_lyrics()
+                    return Spotify.get_lyrics()
 
         return None
 
