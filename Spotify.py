@@ -2,7 +2,7 @@
 import subprocess
 import datetime
 import random
-import requests, json
+import requests
 
 import config
 
@@ -107,25 +107,22 @@ class Spotify:
 
             if command in COMMAND_DELETE:
                 error = "Please choose a number between 1 - {}".format(str(config.QUEUE_LENGTH))
-                if params is not None:
+                if Spotify.check_user(user):
                     try:
                         params = int(params)
-                        if Spotify.check_user(user):
-                            if 5 > params > 1:
-                                queue = Spotify.get_queue(config.QUEUE_LENGTH)
-                                song_info = queue[params - 1]
-                                Spotify.execute_command("del {}".format(params + 1))
-                                USERS[user] = datetime.datetime.now() + datetime.timedelta(minutes=config.WAIT_TIME)
-                                return "Removed {} from the queue".format(song_info)
-                            else:
-                                return error
+                        if params is not None and int(config.QUEUE_LENGTH) >= params >= 1:
+                            queue = Spotify.get_queue(config.QUEUE_LENGTH)
+                            song_info = queue[params - 1]
+                            Spotify.execute_command("del {}".format(params + 1))
+                            USERS[user] = datetime.datetime.now() + datetime.timedelta(minutes=config.WAIT_TIME)
+                            return "Removed {} from the queue".format(song_info)
                         else:
-                            return "Already skipped or deleted a song from the queue in the last {} minutes. " \
-                                "Try again later".format(config.WAIT_TIME)
+                            return error
                     except ValueError:
                         return error
                 else:
-                    return error
+                    return "Already skipped or deleted a song from the queue in the last {} minutes. " \
+                           "Try again later".format(config.WAIT_TIME)
 
             if command in COMMAND_RANDOM:
                 default = random.randint(1, 10)
