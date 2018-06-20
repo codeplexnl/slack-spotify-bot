@@ -1,4 +1,5 @@
 from Mopidy import Mopidy
+import config
 
 class CommandHandler:
     @staticmethod
