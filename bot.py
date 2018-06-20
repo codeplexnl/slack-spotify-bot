@@ -1,29 +1,40 @@
 import time
 
 from slack import Slack
+from Mopidy import Mopidy
 from Spotify import Spotify
+from CommandHandler import CommandHandler
 import config
 
 
 
 if __name__ == "__main__":
+    spotify = Spotify()
+    Mopidy.clear_queue()
+    tracks = spotify.get_tracks()
+    for track in tracks:
+        Mopidy.add_track(track["track"]["uri"])
+    
+    Mopidy.enable_consume()
+    Mopidy.shuffle()
+    
     slack = Slack(config.SLACK_TOKEN)
     READ_WEBSOCKET_DELAY = 1
     song = None
-    Spotify.set_volume(config.VOLUME)
+    Mopidy.set_volume(config.VOLUME)
     config.PLAYING_MAX = False
     if slack.connect():
         while True:
             channel, user, message = slack.read_message()
-            response = Spotify.handle_message(channel, user, message)
+            response = CommandHandler.handle_message(channel, user, message)
             if response is not None:
                 slack.send_message(response, channel)
             
-            current_song = Spotify.get_current_song()
+            current_song = Mopidy.get_current_song()
             if song != current_song:
                 slack.send_message(current_song, config.SLACK_CHANNEL)
                 song = current_song
-                Spotify.set_volume(config.VOLUME)
+                Mopidy.set_volume(config.VOLUME)
                 config.PLAYING_MAX = False
             time.sleep(READ_WEBSOCKET_DELAY)
     else:
