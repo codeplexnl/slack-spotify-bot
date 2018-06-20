@@ -17,6 +17,7 @@ if __name__ == "__main__":
     
     Mopidy.enable_consume()
     Mopidy.shuffle()
+    Mopidy.play()
     
     slack = Slack(config.SLACK_TOKEN)
     READ_WEBSOCKET_DELAY = 1
