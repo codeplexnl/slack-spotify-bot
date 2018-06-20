@@ -1,6 +1,19 @@
 from Mopidy import Mopidy
 import config
 
+COMMAND_PREFIX = "!"
+COMMAND_PLAY = ['play', 'start']
+COMMAND_PAUSE = ['pause', 'stop']
+COMMAND_NEXT = ['next', 'skip']
+COMMAND_INFO = ['info', 'current', 'song']
+COMMAND_HELP = ['help']
+COMMAND_PLAYLIST = ['playlist', 'pl']
+COMMAND_QUEUE = ['queue', 'q']
+COMMAND_VOLUME_UP = ['volumeup', 'volup', 'vu']
+COMMAND_DELETE = ['delete', 'del', 'd']
+COMMAND_RANDOM = ['random', 'rand', 'roll']
+COMMAND_LYRICS = ['lyrics', 'lyr']
+
 class CommandHandler:
     @staticmethod
     def get_command_and_params(message):
