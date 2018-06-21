@@ -29,7 +29,7 @@ class CommandHandler:
             if not message.startswith(COMMAND_PREFIX):
                 return None
 
-            command, params = Mopidy.get_command_and_params(message[len(COMMAND_PREFIX):])
+            command, params = CommandHandler.get_command_and_params(message[len(COMMAND_PREFIX):])
 
 # Start mopidy commands
             if command in COMMAND_QUEUE:
