@@ -38,7 +38,7 @@ if __name__ == "__main__":
                     config.PLAYING_MAX = False
                 time.sleep(READ_WEBSOCKET_DELAY)
             except:
-                if(!slack.connect()):
+                if !slack.connect():
                     slack = Slack(config.SLACK_TOKEN)
                     slack.connect()
     else:
