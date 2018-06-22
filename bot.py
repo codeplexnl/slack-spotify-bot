@@ -6,8 +6,6 @@ from Spotify import Spotify
 from CommandHandler import CommandHandler
 import config
 
-
-
 if __name__ == "__main__":
     spotify = Spotify()
     Mopidy.clear_queue()
@@ -26,17 +24,22 @@ if __name__ == "__main__":
     config.PLAYING_MAX = False
     if slack.connect():
         while True:
-            channel, user, message = slack.read_message()
-            response = CommandHandler.handle_message(channel, user, message)
-            if response is not None:
-                slack.send_message(response, channel)
+            try:    
+                channel, user, message = slack.read_message()
+                response = CommandHandler.handle_message(channel, user, message)
+                if response is not None:
+                    slack.send_message(response, channel)
             
-            current_song = Mopidy.get_current_song()
-            if song != current_song:
-                slack.send_message(current_song, config.SLACK_CHANNEL)
-                song = current_song
-                Mopidy.set_volume(config.VOLUME)
-                config.PLAYING_MAX = False
-            time.sleep(READ_WEBSOCKET_DELAY)
+                current_song = Mopidy.get_current_song()
+                if song != current_song:
+                    slack.send_message(current_song, config.SLACK_CHANNEL)
+                    song = current_song
+                    Mopidy.set_volume(config.VOLUME)
+                    config.PLAYING_MAX = False
+                time.sleep(READ_WEBSOCKET_DELAY)
+            except:
+                if(!slack.connect()):
+                    slack = Slack(config.SLACK_TOKEN)
+                    slack.connect()
     else:
-        print("error connecting")    
+        print("error connecting")
